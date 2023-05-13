@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {formatToDateTime} from '../utils.js';
 import createEditDestinationTemplate from './destination-view.js';
 
@@ -156,24 +156,14 @@ function createEditTemplate(point) {
 </li>`;
 }
 
-export default class EditView {
+export default class EditView extends AbstractView {
+  #point = null;
   constructor({point}) {
-    this.point = point;
+    super();
+    this.#point = point;
   }
 
-  getTemplate() {
-    return createEditTemplate(this.point);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEditTemplate(this.#point);
   }
 }

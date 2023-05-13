@@ -12,7 +12,7 @@ const getCurrentPoints = (count = TASK_COUNT) => {
 };
 
 export default class PointsModel {
-  getPoints() {
+  get points() {
     return getCurrentPoints();
   }
 }
