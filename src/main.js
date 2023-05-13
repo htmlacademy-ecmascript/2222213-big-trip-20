@@ -1,6 +1,6 @@
+import {render, RenderPosition} from './framework/render.js';
 import NewTaskHeaderView from './view/header-view.js';
 import FilterView from './view/filter-view.js';
-import {render, RenderPosition} from './render.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import PointsModel from './model/points-model.js';
 
