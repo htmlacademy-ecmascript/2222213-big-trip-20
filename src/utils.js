@@ -30,4 +30,8 @@ function humanizeTaskDueDate(dueDate) {
   return dueDate ? dayjs(dueDate).format(DATE) : '';
 }
 
-export {getRandomArrayElement, formatToDate, formatToDateTime, humanizeTaskDueDate, formatToTime, getRandomIntInclusive};
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export {getRandomArrayElement, formatToDate, formatToDateTime, humanizeTaskDueDate, formatToTime, getRandomIntInclusive, updateItem};
