@@ -1,4 +1,7 @@
-const TYPE = [
+import {getDestinations} from './model/destinations-model.js';
+import getOffersObjs from './model/offers-model.js';
+
+const EVENT_TYPES = [
   'Taxi',
   'Bus',
   'Train',
@@ -24,7 +27,9 @@ const CITY = [
   'Geneva'
 ];
 
-const TITLE = [
+const DESTINATIONS = getDestinations();
+
+const Title = [
   'Add luggage',
   'Switch to comfort class',
   'Add meal',
@@ -32,9 +37,12 @@ const TITLE = [
   'Travel by train'
 ];
 
+
 const Prise = {
   MIN: 1,
   MAX: 1000
 };
 
-export {TYPE, DESCRIPTIONS, CITY, Prise, TITLE};
+const OFFERS = getOffersObjs();
+
+export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS};
