@@ -23,7 +23,7 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.#boardPoints = [...this.#pointsModel.points];
+    this.#boardPoints = [...this.#pointsModel.generatePoints()];
     render(this.#sortComponent, this.#container);
     render(this.#listComponent, this.#container);
 
