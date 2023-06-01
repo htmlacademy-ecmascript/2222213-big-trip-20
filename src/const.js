@@ -37,6 +37,12 @@ const Title = [
   'Travel by train'
 ];
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present ',
+  PAST: 'past ',
+};
 
 const Prise = {
   MIN: 1,
@@ -45,4 +51,4 @@ const Prise = {
 
 const OFFERS = getOffersObjs();
 
-export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS};
+export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType};
