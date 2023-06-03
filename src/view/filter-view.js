@@ -32,13 +32,22 @@ function createFilterTemplate(filters) {
 
 export default class FilterView extends AbstractView {
   #filters = null;
+  #filterCkick = null;
 
-  constructor({filters}) {
+  constructor({filters, onFilterCkick}) {
     super();
     this.#filters = filters;
+    this.#filterCkick = onFilterCkick;
+
+    this.element.querySelector('.trip-filters__filter').addEventListener('change', this.#filterClickHandler);
   }
 
   get template() {
     return createFilterTemplate(this.#filters);
   }
+
+  #filterClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#filterCkick(this.#filters);
+  };
 }
