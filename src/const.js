@@ -51,4 +51,12 @@ const Prise = {
 
 const OFFERS = getOffersObjs();
 
-export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType};
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
+export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType, SortType};

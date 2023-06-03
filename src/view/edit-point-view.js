@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {formatToDateTime} from '../utils.js';
+import {humanizeDateForEdit} from '../utils.js';
 import createEditDestinationTemplate from './template/destination-view.js';
 import {pointsModel} from '../main.js';
 import {createDestinationTemplate} from './template/destination-view.js';
@@ -13,11 +13,13 @@ const createEventTypesTemplate = () => OFFERS.map((item) => /*html*/ `<div class
 
 function createEditPointTemplate(point) {
 
-  const {destination, type, offers} = point;
+  const {destination, type, dateFrom, dateTo, offers} = point;
   const offersTemplate = createEditOffersTemplate(type, offers);
   const destinationTemplate = createEditDestinationTemplate(destination);
   const editDestinationTemplate = createDestinationTemplate(destination);
   const editEventTypesTemplate = createEventTypesTemplate();
+  const dateFromFull = humanizeDateForEdit(dateFrom);
+  const dateToFull = humanizeDateForEdit(dateTo);
   return /*html*/ `
   <li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -45,10 +47,10 @@ function createEditPointTemplate(point) {
         ${editDestinationTemplate}
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${formatToDateTime(point.dateFrom)}>
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${dateFromFull}>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${formatToDateTime(point.dateFrom)}>
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${dateToFull}>
         </div>
 
         <div class="event__field-group  event__field-group--price">

@@ -22,8 +22,8 @@ export const getMockPoint = () => {
   const point = {
     id: crypto.randomUUID(),
     basePrice: getRandomIntInclusive(Prise.MIN, Prise.MAX),
-    dateFrom: new Date(),
-    dateTo: new Date(),
+    dateFrom: `2023-05-1${getRandomIntInclusive(0, 1)}T${getRandomIntInclusive(10, 22)}:55:56.845Z`,
+    dateTo: `2023-05-1${getRandomIntInclusive(1, 4)}T23:59:13.375Z`,
     destination: currentdestination,
     isFavorite: !!getRandomArrayElement(0, 1),
     type: currentType,
