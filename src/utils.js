@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import {FilterType} from './const.js';
 import utc from 'dayjs/plugin/utc';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+// import { FilterType } from './const.js';
 
 dayjs.extend(utc);
 dayjs.extend(duration);
@@ -68,12 +68,20 @@ function isPointPast (point) {
   return dayjs().isAfter(point.dateTo);
 }
 
-const filters = {
-  [FilterType.EVERYTHING]: (points) => [...points],
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present ',
+  PAST: 'past ',
+};
+
+const filter = {
+  [FilterType.EVERYTHING]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point)),
   [FilterType.PRESENT]: (points) => points.filter((point) => isPointPresent(point)),
   [FilterType.PAST]: (points) => points.filter((point) => isPointPast(point))
 };
+
 
 function capitalize (string) {
   return `${string[0].toUpperCase()}${string.slice(1)}`;
@@ -101,6 +109,11 @@ function sortByPrice(eventA, eventB) {
   return eventB.basePrice - eventA.basePrice;
 }
 
+function isPatchUpdate(point, update) {
+  return dayjs(point.dateFrom).isSame(dayjs(update.dateFrom)) &&
+  dayjs(point.dateTo).isSame(dayjs(update.dateTo));
+}
+
 export {
   getRandomArrayElement,
   getRandomIntInclusive,
@@ -108,7 +121,7 @@ export {
   isPointFuture,
   isPointPresent,
   isPointPast,
-  filters,
+  filter,
   capitalize,
   humanizeDateForEdit,
   humanizeDateForEvent,
@@ -117,5 +130,6 @@ export {
   getTimeGap,
   sortByDay,
   sortByTime,
-  sortByPrice
+  sortByPrice,
+  isPatchUpdate
 };
