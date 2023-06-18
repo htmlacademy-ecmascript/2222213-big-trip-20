@@ -59,4 +59,17 @@ const SortType = {
   OFFERS: 'offers'
 };
 
-export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType, SortType};
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+  INIT: 'INIT',
+};
+
+export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType, SortType, UserAction, UpdateType};
