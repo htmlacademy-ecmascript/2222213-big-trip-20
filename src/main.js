@@ -9,7 +9,7 @@ import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './points-api-service.js';
 // import {generateFilters} from './mock/filter.js';
 
-const AUTHORIZATION = 'Basic hS2sfS44wcl1sa2j';
+const AUTHORIZATION = 'Basic hS2sdS24wcl8sa2j';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 // const filters = [
 //   {
@@ -24,11 +24,15 @@ const tripElement = hederElement.querySelector('.trip-main');
 const tripControlsFiltersElement = tripElement.querySelector('.trip-controls__filters');
 const pageMainElement = bodyElement.querySelector('.page-main');
 const tripEventsElement = pageMainElement.querySelector('.trip-events');
-export const pointsModel = new PointsModel({
-  PointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
-});
+const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION);
+// console.log('pointsApiService', pointsApiService);
+export const pointsModel = new PointsModel(
+  20,
+  pointsApiService
+);
+// console.log('pointsModel', pointsModel);
 const filterModel = new FilterModel();
-const boardPresenter = new BoardPresenter({
+export const boardPresenter = new BoardPresenter({
   container: tripEventsElement,
   pointsModel,
   filterModel,
@@ -60,10 +64,10 @@ function handleNewPointButtonClick() {
 //   onFilterTypeChange: () => {}
 // }), tripControlsFiltersElement);
 render(new NewTaskHeaderView(), tripElement, RenderPosition.AFTERBEGIN);
-render(newPointButtonComponent, tripElement, RenderPosition.BEFOREEND);
+// render(newPointButtonComponent, tripElement, RenderPosition.BEFOREEND);
 
 filterPresenter.init();
 boardPresenter.init();
-// pointsModel.init().finally(() => {
-//   render(newPointButtonComponent, tripElement, RenderPosition.BEFOREEND);
-// });
+pointsModel.init().finally(() => {
+  render(newPointButtonComponent, tripElement, RenderPosition.BEFOREEND);
+});

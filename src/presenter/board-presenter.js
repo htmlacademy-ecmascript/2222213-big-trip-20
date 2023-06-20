@@ -4,6 +4,7 @@ import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 // import { updateItem } from '../utils.js';
+import LoadingView from '../view/point-loading-view.js';
 import ContainerView from '../view/trip-events-view.js';
 import {sortByTime, sortByPrice} from '../utils.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
@@ -18,6 +19,7 @@ export default class BoardPresenter {
   #sortComponent = null;
   #listComponent = new ListView();
   #boardComponent = new ContainerView();
+  #loadingComponent = new LoadingView();
   #noPointComponent = null;
 
   // #boardPoints = [];
@@ -25,6 +27,7 @@ export default class BoardPresenter {
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
   // #sourcedBoardPoints = [];
 
   constructor({container, pointsModel, filterModel, onNewPointDestroy}) {
@@ -40,6 +43,7 @@ export default class BoardPresenter {
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+    this.filterType = this.#filterModel.filter;
   }
 
   init() {
@@ -62,6 +66,7 @@ export default class BoardPresenter {
       case SortType.PRICE:
         return filteredPoints.sort(sortByPrice);
     }
+
     return filteredPoints;
     // return this.#pointsModel.getPoints();
   }
@@ -121,6 +126,12 @@ export default class BoardPresenter {
         this.#renderBoard();
         // - обновить всю доску (например, при переключении фильтра)
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -150,6 +161,27 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  // #handleFilterTypeChange = (newFilterType) => {
+  //   if (this.#filterType === newFilterType) {
+  //     return;
+  //   }
+
+  //   this.#filterType = newFilterType;
+  //   this.#clearBoard();
+  //   this.#renderBoard();
+  // };
+
+  // #renderFilter() {
+  //   console.log('renderFilter', this.#filterModel.filter);
+  //   this.#filterComponent = new FilterView({
+  //     filter: this.#filterModel.filter,
+  //     currentFilterType: this.#filterType,
+  //     onFilterTypeChange: this.#handleFilterTypeChange
+  //   });
+
+  //   render(this.#filterComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
+  // }
+
   #renderSort() {
     this.#sortComponent = new SortView({
       currentSortType: this.#currentSortType,
@@ -171,6 +203,10 @@ export default class BoardPresenter {
 
   #renderPoints(points) {
     points.forEach((point) => this.#renderPoint(point));
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderNoPoints() {
@@ -199,6 +235,7 @@ export default class BoardPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointComponent) {
       remove(this.#noPointComponent);
@@ -212,11 +249,18 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#boardComponent, this.#container);
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
 
+    // this.#renderFilter();
     this.#renderSort();
     this.#renderPointsList();
   }

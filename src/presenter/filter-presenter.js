@@ -4,7 +4,6 @@ import {render, replace, remove} from '../framework/render.js';
 import { filter } from '../utils.js';
 import { FilterType, UpdateType } from '../const.js';
 
-
 export default class FilterPresenter {
   #container = null;
   #pointsModel = null;
@@ -23,7 +22,7 @@ export default class FilterPresenter {
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    this.#points = this.#pointsModel.generatePoints();
+    this.#points = this.#pointsModel.getPoints();
     // this.#filtres = generateFilters(this.#pointsModel.get());
   }
 
@@ -60,6 +59,7 @@ export default class FilterPresenter {
   };
 
   #handleFilterTypeChange = (filterType) => {
+    console.log('#handleFilterTypeChange');
     if (this.#filterModel.filter === filterType) {
       return;
     }
