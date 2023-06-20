@@ -1,16 +1,20 @@
 import {CITY} from '../../const.js';
+import { pointsModel } from '../../main.js';
 
 function createEditDestinationTemplate(destination) {
-  if(destination) {
+  const allDestinations = pointsModel.getDestinations();
+  const currentDestination = allDestinations.find((item) => item.id === destination);
+  // console.log('currentDestination', currentDestination);
+  if(currentDestination) {
     return (
       /*html*/ `
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${destination.description}</p>
+        <p class="event__destination-description">${currentDestination.description}</p>
 
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${destination.pictures.map((picture) => /*html*/ `
+            ${currentDestination.pictures.map((picture) => /*html*/ `
               <img class="event__photo" src=${picture.src} alt=${picture.description}>`).join('')}
           </div>
         </div>
@@ -22,13 +26,15 @@ function createEditDestinationTemplate(destination) {
 
 
 export function createDestinationTemplate(destination) {
-  if(destination) {
+  const allDestinations = pointsModel.getDestinations();
+  const currentDestination = allDestinations.find((item) => item.id === destination);
+  if(currentDestination) {
     return (
       /*html*/ `<input
         class="event__input  event__input--destination"
         id="event-destination-1"
         name="event-destination"
-        value=${destination.name}
+        value=${currentDestination.name}
         list="destination-list-1">
         <datalist id="destination-list-1">
         ${CITY.map((item) => /*html*/ `

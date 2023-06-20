@@ -21,7 +21,7 @@ let newPoint = {type: 'Flight'};
 function createEditPointTemplate(point) {
   const editEventTypesTemplate = createEventTypesTemplate();
   const defaultOffers = pointsModel.getOffers();
-  const currentNewOffers = defaultOffers.find((item) => (item.newType).toLocaleLowerCase() === 'flight');
+  const currentNewOffers = defaultOffers.find((item) => (item.type).toLocaleLowerCase() === 'flight');
   if(point.id) {
     const {destination, type, dateFrom, dateTo, offers} = point;
     const offersTemplate = createEditOffersTemplate(type, offers);
@@ -240,7 +240,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #offersInputHandler = (evt) => {
     const offers = pointsModel.getOffers();
-    const currentOffers = offers.find((item) => (item.newType).toLocaleLowerCase() === evt.target.value);
+    const currentOffers = offers.find((item) => (item.type).toLocaleLowerCase() === evt.target.value);
     evt.preventDefault();
     this.updateElement({
       offers: currentOffers.offers,
@@ -250,7 +250,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #newOffersInputHandler = (evt) => {
     const offers = pointsModel.getOffers();
-    const currentOffers = offers.find((item) => (item.newType).toLocaleLowerCase() === evt.target.value);
+    const currentOffers = offers.find((item) => (item.type).toLocaleLowerCase() === evt.target.value);
     evt.preventDefault();
     newPoint = {
       ...newPoint,

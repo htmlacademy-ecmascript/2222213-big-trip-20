@@ -1,24 +1,36 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDateForEvent, humanizeTimeFrom, humanizeTimeTo, getTimeGap} from '../utils.js';
+import { pointsModel } from '../main.js';
+
+function createPointOffersTemplate(offers, type) {
+  const allOffers = pointsModel.getOffers();
+  const currentOffers = allOffers.find((item) => item.type === type);
+  if(offers) {
+    return currentOffers.offers.map((offer) => `
+    <li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.price}</span>
+    </li>`)
+      .join('');
+  }
+}
 
 function createPointTemplate(point) {
   const {
     basePrice, dateFrom, dateTo, type, isFavorite, destination, offers
   } = point;
 
+  const createPointOffers = createPointOffersTemplate(offers, type);
+
+  const allDestinations = pointsModel.getDestinations();
+  const currentDestination = allDestinations.find((item) => item.id === destination);
+
   const date = humanizeDateForEvent(dateFrom);
   const timeFrom = humanizeTimeFrom(dateFrom);
   const timeTo = humanizeTimeTo(dateTo);
 
   const time = getTimeGap(dateFrom, dateTo);
-
-  const offersList = offers.map((offer) => `
-  <li class="event__offer">
-    <span class="event__offer-title">${offer.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offer.price}</span>
-  </li>`)
-    .join('');
 
   const favoriteClassName = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
@@ -31,7 +43,7 @@ function createPointTemplate(point) {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime=${dateFrom}>${timeFrom}</time>
@@ -45,7 +57,7 @@ function createPointTemplate(point) {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${offersList}
+        ${createPointOffers}
       </ul>
       <button class="event__favorite-btn ${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
