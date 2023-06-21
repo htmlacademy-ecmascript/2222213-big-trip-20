@@ -1,43 +1,17 @@
-// import {getMockPoint} from '../mock/points.js';
-// import getOffersObjs from './offers-model.js';
 import Observable from '../framework/observable.js';
 import { UpdateType } from '../const.js';
-
-// const TASK_COUNT = 5;
-
-// const getCurrentPoints = (count = TASK_COUNT) => {
-//   const points = [];
-//   for (let index = 0; index < count; index++) {
-//     const element = getMockPoint();
-//     points.push(element);
-//   }
-//   return points;
-// };
-
 export default class PointsModel extends Observable {
   #pointsApiService = null;
   #points = [];
-  // #offers = getOffersObjs();
   #offers = [];
   #destinations = [];
-  // userOffersIds = [];
-  // destination = [];
   count = null;
 
   constructor(newCount, pointsApiService) {
     super();
     this.count = newCount;
     this.#pointsApiService = pointsApiService;
-
-    // this.#pointsApiService.points.then((points) => {
-    //   console.log(points.map(this.#adaptToClient));
-    // });
   }
-
-  // generatePoints(count) {
-  //   this.#points = getCurrentPoints(count, this.#offers);
-  //   return this.#points;
-  // }
 
   getPoints() {
     return this.#points;
@@ -48,7 +22,6 @@ export default class PointsModel extends Observable {
   }
 
   getDestinations() {
-    // console.log('???', this.#destinations);
     return this.#destinations;
   }
 
@@ -56,9 +29,8 @@ export default class PointsModel extends Observable {
     try {
       const destinations = await this.#pointsApiService.getDestinations();
       this.#destinations = destinations;
-      // console.log('this.#destinations', this.#destinations);
     } catch (error) {
-      // console.log(error);
+      throw new Error(error);
     }
   }
 
@@ -66,9 +38,8 @@ export default class PointsModel extends Observable {
     try {
       const offers = await this.#pointsApiService.getOffers();
       this.#offers = offers;
-      // console.log('this.#offers', this.#offers);
     } catch (error) {
-      // console.log(error);
+      throw new Error(error);
     }
   }
 
@@ -78,14 +49,9 @@ export default class PointsModel extends Observable {
       this.#points = points.map(this.#adaptToClient);
       await this.fetchDestinations();
       await this.fetchOffers();
-      // console.log('this.#destinations', this.#destinations);
     } catch(err) {
       this.#points = [];
     }
-    // this.#points.forEach((item) => {
-    //   const destination = this.#pointsApiService.getDestination(item.destination);
-    //   console.log(destination);
-    // });
     this._notify(UpdateType.INIT);
   }
 

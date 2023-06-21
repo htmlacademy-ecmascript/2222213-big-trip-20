@@ -54,7 +54,8 @@ export default class PointPresenter {
     }
 
     if(this.#mode === Mode.EDITING) {
-      replace(this.#editPointsComponent, prevPointEditComponent);
+      replace(this.#pointsComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -68,8 +69,26 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#editPointsComponent.reset(this.#point);
+      this.#editPointsComponent?.reset(this.#point);
       this.#replaceFormToCard();
+    }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointsComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointsComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
     }
   }
 
@@ -78,6 +97,23 @@ export default class PointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointsComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editPointsComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editPointsComponent.shake(resetFormState);
   }
 
   #replaceFormToCard(){
@@ -111,7 +147,6 @@ export default class PointPresenter {
       updateType,
       update,
     );
-    this.#replaceFormToCard();
   };
 
   #handleDeleteClick = (point) => {

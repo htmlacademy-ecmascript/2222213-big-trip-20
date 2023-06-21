@@ -1,10 +1,8 @@
-import {CITY} from '../../const.js';
 import { pointsModel } from '../../main.js';
 
-function createEditDestinationTemplate(destination) {
+export function createEditDestinationTemplate(destination) {
   const allDestinations = pointsModel.getDestinations();
   const currentDestination = allDestinations.find((item) => item.id === destination);
-  // console.log('currentDestination', currentDestination);
   if(currentDestination) {
     return (
       /*html*/ `
@@ -19,11 +17,8 @@ function createEditDestinationTemplate(destination) {
           </div>
         </div>
     </section>`);
-  } else {
-    // console.log('дестинатион не пришел');
   }
 }
-
 
 export function createDestinationTemplate(destination) {
   const allDestinations = pointsModel.getDestinations();
@@ -37,14 +32,9 @@ export function createDestinationTemplate(destination) {
         value=${currentDestination.name}
         list="destination-list-1">
         <datalist id="destination-list-1">
-        ${CITY.map((item) => /*html*/ `
-          <option value=${item}>${item}</option>`).join('')}
+        ${allDestinations.map((item) => /*html*/ `
+          <option value=${item.name}>${item.name}</option>`).join('')}
         </datalist>
       </div>`);
-  } else {
-    // console.log('дестинатион не пришел');
   }
 }
-
-export default createEditDestinationTemplate;
-

@@ -1,10 +1,10 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {humanizeDateForEdit} from '../utils.js';
-import createEditDestinationTemplate from './template/destination-view.js';
+import {createEditDestinationTemplate} from './template/destination-view.js';
 import {pointsModel} from '../main.js';
 import {createDestinationTemplate} from './template/destination-view.js';
 import {createEditOffersTemplate} from './template/offers-view.js';
-import {DESTINATIONS, OFFERS} from '../const.js';
+import {OFFERS} from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
@@ -230,20 +230,15 @@ export default class EditPointView extends AbstractStatefulView {
     } else {
       // console.log('typeGroup не пришел');
     }
-    // this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#eventClickFormHandler);
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    // this.element.querySelector('.event__type-group').addEventListener('change', this.#offersInputHandler);
-    // this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
     this.#setDatepicker();
   }
 
   #offersInputHandler = (evt) => {
-    const offers = pointsModel.getOffers();
-    const currentOffers = offers.find((item) => (item.type).toLocaleLowerCase() === evt.target.value);
     evt.preventDefault();
     this.updateElement({
-      offers: currentOffers.offers,
+      offers: [],
       type: evt.target.value,
     });
   };
@@ -260,9 +255,10 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #destinationInputHandler = (evt) => {
-    const currentDestination = DESTINATIONS.find((item) => item.name === evt.target.value);
+    const allDestinations = pointsModel.getDestinations();
+    const currentDestination = allDestinations.find((item) => item.name === evt.target.value);
     this.updateElement({
-      destination: currentDestination,
+      destination: currentDestination.id,
     });
   };
 
@@ -318,8 +314,12 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #formSubmitHandler = (evt) => {
+    const price = this.element.querySelector('.event__input--price').value;
+    const offers = Array.from(document.querySelectorAll('.event__offer-checkbox'));
+    const checkedOffers = offers.filter((offer) => offer.checked === true);
+    const offersId = checkedOffers.map((item) => item.id);
     evt.preventDefault();
-    this.#formSubmit(EditPointView.parsePointToState(this._state));
+    this.#formSubmit(EditPointView.parseToPointState(this._state, price, offersId));
   };
 
   #eventClickFormHandler = (evt) => {
@@ -332,8 +332,19 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleDeleteClick(EditPointView.parsePointToState(this._state));
   };
 
+  reset = () => {
+  };
+
   static parsePointToState(state) {
     const point = {...state};
+    return point;
+  }
+
+  static parseToPointState(state, price, offersId) {
+    const point = {...state,
+      basePrice: Number(price),
+      offers: offersId,
+    };
     return point;
   }
 }

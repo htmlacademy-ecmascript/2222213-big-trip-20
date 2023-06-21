@@ -10,19 +10,16 @@ const Method = {
 
 export default class PointsApiService extends ApiService {
   async getPoints() {
-    // console.log('!!!');
     return this._load({url: 'points'})
       .then(ApiService.parseResponse);
   }
 
   async getDestinations() {
-    // console.log('getDestination');
     return this._load({url: 'destinations'})
       .then(ApiService.parseResponse);
   }
 
   async getOffers() {
-    // console.log('getossssss');
     return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
   }

@@ -3,14 +3,19 @@ import ListView from '../view/list-view.js';
 import SortView from '../view/sort-view.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
-// import { updateItem } from '../utils.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import LoadingView from '../view/point-loading-view.js';
 import ContainerView from '../view/trip-events-view.js';
 import {sortByTime, sortByPrice} from '../utils.js';
-import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { SortType, UpdateType, UserAction} from '../const.js';
+import { FilterType } from '../utils.js';
 import NoPointView from '../view/no-event-view.js';
 import { filter } from '../utils.js';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 export default class BoardPresenter {
   #container = null;
   #pointsModel = null;
@@ -22,13 +27,16 @@ export default class BoardPresenter {
   #loadingComponent = new LoadingView();
   #noPointComponent = null;
 
-  // #boardPoints = [];
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
-  // #sourcedBoardPoints = [];
+  #showErrorMessage = false;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor({container, pointsModel, filterModel, onNewPointDestroy}) {
     this.#container = container;
@@ -47,18 +55,13 @@ export default class BoardPresenter {
   }
 
   init() {
-    // this.#boardPoints = [...this.#pointsModel.generatePoints()];
-    // this.#sourcedBoardPoints = [...this.#pointsModel.generatePoints()];
-    // this.#pointsModel.generatePoints();
     this.#renderBoard();
-    // console.log('test', this.#pointsModel.getPoints());
   }
 
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.getPoints();
     const filteredPoints = filter[this.#filterType](points);
-    console.log(filteredPoints);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -68,7 +71,6 @@ export default class BoardPresenter {
     }
 
     return filteredPoints;
-    // return this.#pointsModel.getPoints();
   }
 
   createPoint() {
@@ -82,28 +84,39 @@ export default class BoardPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  // #handlePointChange = (updatedPoint) => {
-  // this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
-  // this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
-  //   this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  // };
-
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     // Здесь будем вызывать обновление модели.
     // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
     // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
     // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setSaving();
+        try {
+          await this.#pointsModel.updatePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
       case UserAction.ADD_POINT:
-        this.#pointsModel.addPoint(updateType, update);
+        this.NewPointPresenter.setSaving();
+        try {
+          await this.#pointsModel.addPoint(updateType, update);
+        } catch(err) {
+          this.NewPointPresenter.setAborting();
+        }
         break;
       case UserAction.DELETE_POINT:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointPresenters.get(update.id).setDeleting();
+        try {
+          await this.#pointsModel.deletePoint(updateType, update);
+        } catch(err) {
+          this.#pointPresenters.get(update.id).setAborting();
+        }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -135,22 +148,6 @@ export default class BoardPresenter {
     }
   };
 
-
-  // #sortPoint(sortType) {
-  //   switch (sortType) {
-  //     case SortType.DAY:
-  //       this.#boardPoints.sort(sortByDay);
-  //       break;
-  //     case SortType.TIME:
-  //       this.#boardPoints.sort(sortByTime);
-  //       break;
-  //     case SortType.PRICE:
-  //       this.#boardPoints.sort(sortByPrice);
-  //       break;
-  //   }
-  //   this.#currentSortType = sortType;
-  // }
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
@@ -160,27 +157,6 @@ export default class BoardPresenter {
     this.#clearBoard();
     this.#renderBoard();
   };
-
-  // #handleFilterTypeChange = (newFilterType) => {
-  //   if (this.#filterType === newFilterType) {
-  //     return;
-  //   }
-
-  //   this.#filterType = newFilterType;
-  //   this.#clearBoard();
-  //   this.#renderBoard();
-  // };
-
-  // #renderFilter() {
-  //   console.log('renderFilter', this.#filterModel.filter);
-  //   this.#filterComponent = new FilterView({
-  //     filter: this.#filterModel.filter,
-  //     currentFilterType: this.#filterType,
-  //     onFilterTypeChange: this.#handleFilterTypeChange
-  //   });
-
-  //   render(this.#filterComponent, this.#boardComponent.element, RenderPosition.AFTERBEGIN);
-  // }
 
   #renderSort() {
     this.#sortComponent = new SortView({
@@ -214,17 +190,13 @@ export default class BoardPresenter {
       filterType: this.#filterType
     });
 
-    render(this.#noPointComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+    if(!this.#showErrorMessage) {
+      render(this.#noPointComponent, this.#listComponent.element, RenderPosition.AFTERBEGIN);
+    }
   }
 
-  // #clearEventsList() {
-  //   this.#pointPresenters.forEach((presenter) => presenter.destroy());
-  //   this.#pointPresenters.clear();
-  // }
-
   #renderPointsList() {
-    // const pointCount = this.#pointsModel.generatePoints();
-    const pointCount = this.#pointsModel.getPoints();
+    const pointCount = this.points;
     render(this.#listComponent, this.#container);
     this.#renderPoints(pointCount);
   }
@@ -260,7 +232,6 @@ export default class BoardPresenter {
       return;
     }
 
-    // this.#renderFilter();
     this.#renderSort();
     this.#renderPointsList();
   }
