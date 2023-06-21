@@ -1,22 +1,15 @@
 import {render, RenderPosition} from './framework/render.js';
 import NewTaskHeaderView from './view/header-view.js';
-// import FilterView from './view/filter-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './points-api-service.js';
-// import {generateFilters} from './mock/filter.js';
 
-const AUTHORIZATION = 'Basic hS2sdS24wcl8sa2j';
+const AUTHORIZATION = 'Basic hS2sdS25wcl9sa2j';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
-// const filters = [
-//   {
-//     type: 'everything',
-//     count: 0,
-//   },
-// ];
+
 
 const bodyElement = document.querySelector('.page-body');
 const hederElement = bodyElement.querySelector('.page-header');
@@ -25,12 +18,10 @@ const tripControlsFiltersElement = tripElement.querySelector('.trip-controls__fi
 const pageMainElement = bodyElement.querySelector('.page-main');
 const tripEventsElement = pageMainElement.querySelector('.trip-events');
 const pointsApiService = new PointsApiService(END_POINT, AUTHORIZATION);
-// console.log('pointsApiService', pointsApiService);
 export const pointsModel = new PointsModel(
   20,
   pointsApiService
 );
-// console.log('pointsModel', pointsModel);
 const filterModel = new FilterModel();
 export const boardPresenter = new BoardPresenter({
   container: tripEventsElement,
@@ -38,7 +29,6 @@ export const boardPresenter = new BoardPresenter({
   filterModel,
   onNewPointDestroy: handleNewPointFormClose
 });
-// const filters = generateFilters(pointsModel.points);
 
 const filterPresenter = new FilterPresenter({
   container: tripControlsFiltersElement,
@@ -59,12 +49,7 @@ function handleNewPointButtonClick() {
   newPointButtonComponent.element.disabled = true;
 }
 
-// render(new FilterView({filters,
-//   currentFilterType: 'everything',
-//   onFilterTypeChange: () => {}
-// }), tripControlsFiltersElement);
 render(new NewTaskHeaderView(), tripElement, RenderPosition.AFTERBEGIN);
-// render(newPointButtonComponent, tripElement, RenderPosition.BEFOREEND);
 
 filterPresenter.init();
 boardPresenter.init();

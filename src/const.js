@@ -1,4 +1,3 @@
-import {getDestinations} from './model/destinations-model.js';
 import getOffersObjs from './model/offers-model.js';
 
 const EVENT_TYPES = [
@@ -27,8 +26,6 @@ const CITY = [
   'Geneva'
 ];
 
-const DESTINATIONS = getDestinations();
-
 const Title = [
   'Add luggage',
   'Switch to comfort class',
@@ -36,13 +33,6 @@ const Title = [
   'Choose seats',
   'Travel by train'
 ];
-
-const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present ',
-  PAST: 'past ',
-};
 
 const Prise = {
   MIN: 1,
@@ -72,4 +62,4 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
-export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, DESTINATIONS, OFFERS, FilterType, SortType, UserAction, UpdateType};
+export {EVENT_TYPES, DESCRIPTIONS, CITY, Prise, Title, OFFERS, SortType, UserAction, UpdateType};

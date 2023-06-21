@@ -1,17 +1,18 @@
-import {OFFERS} from '../../const.js';
+import { pointsModel } from '../../main.js';
 
 export function createEditOffersTemplate(type, offers) {
-  if(offers) {
-    const currentOffers = OFFERS.find((item) => item.newType.toLocaleLowerCase() === type.toLocaleLowerCase());
+  const allOffers = pointsModel.getOffers();
+  const offersType = allOffers.find((item) => item.type === type);
+  if(offersType) {
     return (
-      currentOffers.offers.map((offer) => /*html*/`<input
+      offersType.offers.map((offer) => /*html*/`<input
       class="event__offer-checkbox  visually-hidden"
-      id="event-offer-${offer.id}"
+      id="${offer.id}"
       type="checkbox"
       name="event-offer-luggage"
-      ${offers.find((item) => item.id === offer.id) ? 'checked' : ''}
+      ${offers.find((item) => item === offer.id) ? 'checked' : ''}
       >
-    <label class="event__offer-label" for="event-offer-${offer.id}">
+    <label class="event__offer-label" for="${offer.id}">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${offer.price}</span>

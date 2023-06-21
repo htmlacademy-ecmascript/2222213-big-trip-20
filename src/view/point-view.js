@@ -5,8 +5,9 @@ import { pointsModel } from '../main.js';
 function createPointOffersTemplate(offers, type) {
   const allOffers = pointsModel.getOffers();
   const currentOffers = allOffers.find((item) => item.type === type);
+  const ceckedOffers = currentOffers.offers.filter((item) => offers.includes(item.id));
   if(offers) {
-    return currentOffers.offers.map((offer) => `
+    return ceckedOffers.map((offer) => `
     <li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;

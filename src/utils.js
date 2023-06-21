@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-// import { FilterType } from './const.js';
 
 dayjs.extend(utc);
 dayjs.extend(duration);
@@ -71,8 +70,8 @@ function isPointPast (point) {
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
-  PRESENT: 'present ',
-  PAST: 'past ',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
 const filter = {
@@ -131,5 +130,6 @@ export {
   sortByDay,
   sortByTime,
   sortByPrice,
-  isPatchUpdate
+  isPatchUpdate,
+  FilterType
 };
