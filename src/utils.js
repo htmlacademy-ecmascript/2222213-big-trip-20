@@ -51,6 +51,8 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
 }
 
+const parseDateFromEditFormat = (dateString) => dayjs.utc(dateString, DATE_FORMAT_FOR_EDIT).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+
 function updateItem(items, update) {
   return items.map((item) => item.id === update.id ? update : item);
 }
@@ -124,6 +126,7 @@ export {
   capitalize,
   humanizeDateForEdit,
   humanizeDateForEvent,
+  parseDateFromEditFormat,
   humanizeTimeFrom,
   humanizeTimeTo,
   getTimeGap,
@@ -131,5 +134,5 @@ export {
   sortByTime,
   sortByPrice,
   isPatchUpdate,
-  FilterType
+  FilterType,
 };

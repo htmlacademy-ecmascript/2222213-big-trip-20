@@ -5,14 +5,14 @@ import { UserAction, UpdateType } from '../const';
 export default class NewPointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
-  #handleDestroy = null;
+  #onClose = null;
 
   #pointEditComponent = null;
 
-  constructor({pointListContainer, onDataChange, onDestroy}) {
+  constructor({pointListContainer, onDataChange, onClose}) {
     this.#pointListContainer = pointListContainer;
     this.#handleDataChange = onDataChange;
-    this.#handleDestroy = onDestroy;
+    this.#onClose = onClose;
   }
 
   init() {
@@ -22,7 +22,7 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent = new EditPointView({
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#onClose
     });
 
     render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
@@ -34,8 +34,6 @@ export default class NewPointPresenter {
     if (this.#pointEditComponent === null) {
       return;
     }
-
-    this.#handleDestroy();
 
     remove(this.#pointEditComponent);
     this.#pointEditComponent = null;
@@ -66,15 +64,8 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      // Пока у нас нет сервера, который бы после сохранения
-      // выдывал честный id задачи, нам нужно позаботиться об этом самим
       point,
     );
-    this.destroy();
-  };
-
-  #handleDeleteClick = () => {
-    this.destroy();
   };
 
   #escKeyDownHandler = (evt) => {
