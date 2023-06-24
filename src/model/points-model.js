@@ -5,11 +5,10 @@ export default class PointsModel extends Observable {
   #points = [];
   #offers = [];
   #destinations = [];
-  count = null;
+  #defaultPoint = {type: 'Flight', destination: '74669640-07a1-42eb-8a65-56f37b4d7f4a'};
 
-  constructor(newCount, pointsApiService) {
+  constructor(pointsApiService) {
     super();
-    this.count = newCount;
     this.#pointsApiService = pointsApiService;
   }
 
@@ -23,6 +22,18 @@ export default class PointsModel extends Observable {
 
   getDestinations() {
     return this.#destinations;
+  }
+
+  getDefaultPoint() {
+    return this.#defaultPoint;
+  }
+
+  updateDefaultPoint(data) {
+    this.#defaultPoint = data;
+  }
+
+  updateDefaultPointDestination(destination) {
+    this.#defaultPoint = {...this.#defaultPoint, destination};
   }
 
   async fetchDestinations() {

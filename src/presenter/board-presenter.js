@@ -46,7 +46,11 @@ export default class BoardPresenter {
     this.#newPointPresenter = new NewPointPresenter({
       pointListContainer: this.#listComponent.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewPointDestroy
+      onClose: () => {
+        this.#clearBoard();
+        this.#renderBoard();
+        onNewPointDestroy();
+      }
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -77,7 +81,12 @@ export default class BoardPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+
+    if(this.#noPointComponent) {
+      remove(this.#noPointComponent);
+    }
   }
+
 
   #handleModeChange = () => {
     this.#newPointPresenter.destroy();
@@ -86,10 +95,6 @@ export default class BoardPresenter {
 
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setSaving();
@@ -100,11 +105,11 @@ export default class BoardPresenter {
         }
         break;
       case UserAction.ADD_POINT:
-        this.NewPointPresenter.setSaving();
+        this.#newPointPresenter.setSaving();
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {
-          this.NewPointPresenter.setAborting();
+          this.#newPointPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_POINT:
@@ -120,24 +125,17 @@ export default class BoardPresenter {
   };
 
   #handleModelEvent = (updateType, data) => {
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderBoard();
-        // - обновить список (например, когда задача ушла в архив)
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
-        // - обновить всю доску (например, при переключении фильтра)
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
@@ -197,7 +195,6 @@ export default class BoardPresenter {
 
   #renderPointsList() {
     const pointCount = this.points;
-    render(this.#listComponent, this.#container);
     this.#renderPoints(pointCount);
   }
 
@@ -221,6 +218,7 @@ export default class BoardPresenter {
 
   #renderBoard() {
     render(this.#boardComponent, this.#container);
+    render(this.#listComponent, this.#container);
 
     if (this.#isLoading) {
       this.#renderLoading();

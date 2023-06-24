@@ -9,7 +9,7 @@ export default class FilterPresenter {
   #pointsModel = null;
   #filterModel = null;
   #filterComponent = null;
-  #points = [];
+  filterType = null;
 
 
   constructor({container, pointsModel, filterModel}) {
@@ -19,13 +19,14 @@ export default class FilterPresenter {
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    this.#points = this.#pointsModel.getPoints();
   }
 
   get filters() {
+    const points = this.#pointsModel.getPoints();
+
     return Object.values(FilterType).map((type) => ({
       type,
-      count: filter[type](this.#points).length
+      count: filter[type](points).length
     }));
   }
 
@@ -34,7 +35,7 @@ export default class FilterPresenter {
 
     this.#filterComponent = new FilterView({
       filter: this.filters,
-      currentFilterType: this.#filterModel.filter,
+      filterType: this.#filterModel.filter,
       onFilterTypeChange: this.#handleFilterTypeChange
     });
 
