@@ -262,25 +262,6 @@ export default class EditPointView extends AbstractStatefulView {
     }
   };
 
-  #dateFromChangeHandler = ([userDate]) => {
-    this._setState({
-      point: {
-        ...this._state.point,
-        dateFrom: userDate,
-      }
-    });
-  };
-
-  #dateToChangeHandler = ([userDate]) => {
-    this._setState({
-      point: {
-        ...this._state.point,
-        dateTo: userDate,
-      }
-    });
-  };
-
-
   #setDatepicker = () => {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
@@ -311,6 +292,24 @@ export default class EditPointView extends AbstractStatefulView {
         'time_24hr': true
       },
     );
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this._setState({
+      ...this._state,
+      dateFrom: userDate,
+    });
+
+    this.#datepickerTo.set('minDate', this._state.dateFrom);
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this._setState({
+      ...this._state,
+      dateTo: userDate,
+    });
+
+    this.#datepickerFrom.set('maxDate', this._state.dateTo);
   };
 
   #formSubmitHandler = (evt) => {
