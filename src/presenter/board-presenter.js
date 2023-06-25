@@ -11,6 +11,7 @@ import { SortType, UpdateType, UserAction} from '../const.js';
 import { FilterType } from '../utils.js';
 import NoPointView from '../view/no-event-view.js';
 import { filter } from '../utils.js';
+import { newPointButtonComponent } from '../main.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -106,6 +107,7 @@ export default class BoardPresenter {
         break;
       case UserAction.ADD_POINT:
         this.#newPointPresenter.setSaving();
+        newPointButtonComponent.element.disabled = false;
         try {
           await this.#pointsModel.addPoint(updateType, update);
         } catch(err) {

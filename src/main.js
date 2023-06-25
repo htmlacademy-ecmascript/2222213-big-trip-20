@@ -7,7 +7,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import NewPointButtonView from './view/new-point-button-view.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic hS2sfS35ec29sa2j';
+const AUTHORIZATION = 'Basic hS2sfd35ec29sa2j';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 
@@ -35,7 +35,7 @@ const filterPresenter = new FilterPresenter({
   pointsModel
 });
 
-const newPointButtonComponent = new NewPointButtonView ({
+export const newPointButtonComponent = new NewPointButtonView ({
   onClick: handleNewPointButtonClick
 });
 

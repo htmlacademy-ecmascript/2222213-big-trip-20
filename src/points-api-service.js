@@ -1,5 +1,6 @@
 import ApiService from './framework/api-service.js';
 import dayjs from 'dayjs';
+import { pointsModel } from './main.js';
 
 const Method = {
   GET: 'GET',
@@ -40,6 +41,9 @@ export default class PointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
+    const allPoints = pointsModel.getPoints();
+    const filteredPoints = allPoints.filter((item) => item.id !== point.id);
+    pointsModel.setPoints(filteredPoints);
 
     return parsedResponse;
   }
@@ -67,14 +71,15 @@ export default class PointsApiService extends ApiService {
   }
 
   #adaptToServer(point) {
+    const defaultPoint = pointsModel.getDefaultPoint();
     const adaptedPoint = {
       'base_price': Number(point.basePrice),
       'date_from': dayjs(point.dateFrom).toJSON(),
       'date_to': dayjs(point.dateTo).toJSON(),
       'is_favorite': point.isFavorite ?? false,
-      'destination': point.destination,
+      'destination': point.destination || defaultPoint.destination,
       'offers': point.offers,
-      'type': point.type
+      'type': point.type || defaultPoint.type.toLocaleLowerCase(),
     };
 
     return adaptedPoint;

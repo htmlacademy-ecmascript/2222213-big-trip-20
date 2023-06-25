@@ -16,6 +16,10 @@ export default class PointsModel extends Observable {
     return this.#points;
   }
 
+  setPoints(points) {
+    this.#points = points;
+  }
+
   getOffers() {
     return this.#offers;
   }
