@@ -1,6 +1,7 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import { UserAction, UpdateType } from '../const';
+import { newPointButtonComponent } from '../main.js';
 
 export default class NewPointPresenter {
   #pointListContainer = null;
@@ -72,6 +73,7 @@ export default class NewPointPresenter {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
+      newPointButtonComponent.element.disabled = false;
     }
   };
 }
